@@ -18,12 +18,12 @@ export default class ReusableRelatedListCmp extends LightningElement(LightningEl
     @track sortBy = 'Id';
     @track sortedDirection = 'asc';
 
-    AllRecords = [];
-    TopRecords = [];
-    ColumnButtons = [];
-    ColumnHeaderButtons = [];
+    AllRecords;
+    TopRecords;
+    ColumnButtons;
+    ColumnHeaderButtons;
     ComponentTitle;
-    HeaderButtons = [];
+    HeaderButtons;
 
     @wire(getRelatedRecords, { recordId: '$recordId', key: '$key', relationshipFieldApiName: '$relationshipFieldApiName', sortField: '$sortBy', sortDirection: '$sortedDirection'})
     loadResults({ error, data }){
