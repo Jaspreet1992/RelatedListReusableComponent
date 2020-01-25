@@ -64,26 +64,6 @@ export default class ReusableRelatedListCmp extends LightningElement(LightningEl
         }
     }
 
-    /*connectedCallback() {
-
-        Promise.all([
-            loadScript(this, '/soap/ajax/32.0/apex.js'),
-            loadScript(this, '/support/console/47.0/integration.js'),
-            loadScript(this, '/soap/ajax/47.0/connection.js'),
-        ])
-        .then(() => { 
-            console.log('Scripts loaded successfully');
-            //this.error = undefined;
-            // Call back function if scripts loaded successfully
-            //this.showSuccessMessage();
-        })
-        .catch(error => {
-            console.log('Error loading scripts');
-        });
-
-
-    }*/
-
     showAllRecords(){
         if(this.ViewRecordLabel === 'Show More'){
             this.data = this.AllRecords;
@@ -150,11 +130,6 @@ export default class ReusableRelatedListCmp extends LightningElement(LightningEl
                 let label = col_button.label;
                 let link = col_button.link;
                 let openAs = col_button.openAs;
-
-                //const selectedEvent = new CustomEvent('SendMsg', { detail: { data:  'hi from lwc'} });
-
-                // Dispatches the event.
-                //this.dispatchEvent(selectedEvent);
                 
                 if(label === actionName && link !== '' && link !== null && link !== undefined){
                     if(link.indexOf("?") !== -1){

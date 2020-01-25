@@ -6,27 +6,6 @@
 -->
 
 <template>
-    <!--<div style="height: 300px;">
-        <lightning-datatable
-                key-field="id"
-                data={data}
-                columns={columns}
-                hide-checkbox-column="true">
-        </lightning-datatable>
-        <lightning-button label="Show More" onclick={showAllRecords} ></lightning-button>
-    </div>-->
-
-    <!--<lightning-card  title="Hello">
-        <lightning-datatable
-                key-field="id"
-                data={data}
-                columns={columns}
-                hide-checkbox-column="true">
-        </lightning-datatable>
-        <div slot="footer"><lightning-button label="New" ></lightning-button></div>
-    </lightning-card>-->
-
-
     <div class="slds-card">
     <div class="slds-card__header slds-grid">
       <div class="slds-media slds-media--center slds-has-flexi-truncate">
@@ -42,18 +21,7 @@
       <div class="slds-no-flex">
           <template if:true={HeaderButtons}>
               <div class="slds-button-group">
-                  <!--<button class="slds-button slds-button--neutral slds-button--small">Button</button>
-                  <button class="slds-button slds-button--icon-border-filled slds-toggle-visibility">
-                    <svg aria-hidden="true" class="slds-button__icon">
-                      <use xlink:href="/assets/icons/utility-sprite/svg/symbols.svg#down"></use>
-                    </svg>
-                    <span class="slds-assistive-text">Show More</span>
-                  </button>-->
                   <lightning-button-menu label="MENU" alternative-text="Show menu" variant="border-filled" class="slds-m-left_small">
-                    <!--<lightning-menu-item value="MenuItemOne" label="Menu Item One"></lightning-menu-item>
-                    <lightning-menu-item value="MenuItemTwo" label="Menu Item Two"></lightning-menu-item>
-                    <lightning-menu-item value="MenuItemThree" label="Menu Item Three"></lightning-menu-item>
-                    <lightning-menu-item value="MenuItemFour" label="Menu Item Four"></lightning-menu-item>-->
                     <template for:each={HeaderButtons} for:item="button">
                       <lightning-menu-item key={button.label} value={button.label} label={button.label}></lightning-menu-item>
                     </template>
@@ -63,40 +31,6 @@
       </div>
     </div>
     <div class="slds-card__body">
-      <!--<table class="slds-table slds-table--bordered slds-max-medium-table--stacked-horizontal slds-no-row-hover">
-        <thead>
-          <tr>
-            <th class="slds-text-heading--label slds-size--1-of-4" scope="col">Name</th>
-            <th class="slds-text-heading--label slds-size--1-of-4" scope="col">Company</th>
-            <th class="slds-text-heading--label slds-size--1-of-4" scope="col">Title</th>
-            <th class="slds-text-heading--label slds-size--1-of-4" scope="col">Email</th>
-            <th class="row-action" scope="col">
-              <button class="slds-button slds-button--icon-border-filled slds-button--icon-x-small">
-                <svg aria-hidden="true" class="slds-button__icon slds-button__icon--hint slds-button__icon--small">
-                  <use xlink:href="/assets/icons/utility-sprite/svg/symbols.svg#down"></use>
-                </svg>
-                <span class="slds-assistive-text">Show More</span>
-              </button>
-            </th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr class="slds-hint-parent">
-            <td class="slds-size--1-of-4" data-label="Name">Adam Choi</td>
-            <td class="slds-size--1-of-4" data-label="Company">Company One</td>
-            <td class="slds-size--1-of-4" data-label="Title">Director of Operations</td>
-            <td class="slds-size--1-of-4" data-label="Email">adam@company.com</td>
-            <td>
-              <button class="slds-button slds-button--icon-border-filled slds-button--icon-x-small">
-                <svg aria-hidden="true" class="slds-button__icon slds-button__icon--hint slds-button__icon--small">
-                  <use xlink:href="/assets/icons/utility-sprite/svg/symbols.svg#down"></use>
-                </svg>
-                <span class="slds-assistive-text">Show More</span>
-              </button>
-            </td>
-          </tr>
-        </tbody>
-      </table>-->
       <lightning-datatable
                 key-field="id"
                 data={data}
