@@ -6,14 +6,28 @@
 global class ReusableRelatedListCmpCtrl {
 
     @AuraEnabled(Cacheable=true)
-    global static RelatedListResultWrapper getRelatedRecords(String recordId, String key, String relationshipFieldApiName, 
-                                                             String sortField, String sortDirection) {
-        integer index =0;
-        integer topRecords;
-        List<Object> AllRelatedRecords = new List<Object>();
-        List<Object> TopSelectedRelatedRecords = new List<Object>();
-        
-        Map<String, reusable_List_MetaData__mdt> MetaDataMap = new Map<String, reusable_List_MetaData__mdt>();
+    global static RelatedListResultWrapper getRelatedRecords(String recordId, String metaDatakey,
+                                                             String relationshipFieldApiName, String dynamicCondition, 
+                                                             String sortField, String sortDirection) 
+    {
+        System.debug('$$ recordId: '+recordId);
+        System.debug('$$ metaDatakey: '+metaDatakey); 
+        System.debug('$$ relationshipFieldApiName: '+relationshipFieldApiName); 
+        System.debug('$$ dynamicCondition: '+dynamicCondition); 
+        System.debug('$$ sortField: '+sortField); 
+        System.debug('$$ sortDirection: '+sortDirection); 
+        RequestResponseHandler handler = RequestResponseHandler.getInstance();
+        RRListService listService = RRListService.getInstance();                                                         
+        RelatedListRequestWrapper req = handler.createRequest(recordId, metaDatakey, relationshipFieldApiName, dynamicCondition, sortField, sortDirection);
+                                                               
+        return handler.createResponse(listService.processRequest(req), listService.getMetaDataInfo());
+                                                                 
+        /*RRListService listService = RRListService.getInstance();
+		listService.setRequest(new RelatedListRequestWrapper(recordId, key, relationshipFieldApiName, 
+                                                             dynamicCondition, sortField, sortDirection));*/		
+                                                                 
+                                                                 
+        /*Map<String, reusable_List_MetaData__mdt> MetaDataMap = new Map<String, reusable_List_MetaData__mdt>();
         List<reusable_List_MetaData__mdt> listMetaData = 
             [Select Id, MasterLabel, Column_JSON__c, Column_Header_Buttons_JSON__c, Column_Buttons_JSON__c,
              Component_Title__c, Header_Buttons_JSON__c, Query_post_condition__c, Query_without_conditions__c, 
@@ -24,7 +38,7 @@ global class ReusableRelatedListCmpCtrl {
             MetaDataMap.put(record.MasterLabel, record);
         }
         
-        reusable_List_MetaData__mdt metaDataRec = MetaDataMap.get(key);
+        reusable_List_MetaData__mdt metaDataRec = MetaDataMap.get(metaDatakey);
         
         String query = metaDataRec.Query_without_conditions__c; 
         topRecords = (Integer) metaDataRec.Top_records_to_be_shown__c;
@@ -36,11 +50,11 @@ global class ReusableRelatedListCmpCtrl {
         	String metaDataCondition = metaDataRec.Where_condition__c != null ? metaDataRec.Where_condition__c + ' AND ': '';
             String recordIdCondition = relationshipFieldApiName != null && recordId != null ? relationshipFieldApiName + '=' +'\''+recordId+'\'' : '';
         	
-            whereCondition = ' where ' + metaDataCondition + recordIdCondition;   //+ ' where ' + ' ORDER BY Name LIMIT 20'
+            whereCondition = ' where ' + metaDataCondition + recordIdCondition;   //+ ' where ' + ' ORDER BY Name LIMIT 20'*/
         	//queryPostCondition = metaDataRec.Query_post_condition__c != null ? metaDataRec.Query_post_condition__c : '';    
         	
-            query = query + ' ' + whereCondition + ' ' /*+ queryPostCondition */;
-            if(sortField != null && sortDirection != null){
+            //query = query + ' ' + whereCondition + ' ' /*+ queryPostCondition */;
+            /*if(sortField != null && sortDirection != null){
                 query = query + 'Order by ' + sortField + ' ' + sortDirection;
             }
             
@@ -70,52 +84,9 @@ global class ReusableRelatedListCmpCtrl {
                                          metaDataRec.Column_Header_Buttons_JSON__c, 
                                          metaDataRec.Component_Title__c, metaDataRec.Header_Buttons_JSON__c);
         
-        return wrapperObj;
+        return wrapperObj;*/
+                                                                 
     }
-    
-    private static List<Object> flattenListJSON(List<Object> ObjList){
-        for(integer i=0; i < ObjList.size(); i++){
-            Map<String, Object> ObjAttributeMap = (Map<String, Object>) ObjList[i];
-            Map<String, Object> ObjNewAttributeMap = new Map<String, Object>();
-            
-            for(String attrValueKey : ObjAttributeMap.keySet()){
-                Object attrValue = ObjAttributeMap.get(attrValueKey);
-                if(attrValue != 'attributes'){
-                    if(!(attrValue instanceof String)){
-                        ObjNewAttributeMap = flattenObjectJSON(attrValue, attrValueKey);
-                    }    
-                }
-            } 
-            ObjAttributeMap.putAll(ObjNewAttributeMap);
-            System.debug('--- updated map --- ' + ObjAttributeMap);
-            ObjList[i] = ObjAttributeMap;
-            System.debug('--- updated List --- ' + ObjList[i]);
-        }
-        
-        return ObjList;
-    }
-    
-    private static Map<String, Object> flattenObjectJSON(Object obj, String objName){
-    	Map<String, Object> ObjAttributeMap = (Map<String, Object>) obj;
-        Map<String, Object> ObjNewAttributeMap = new Map<String, Object>();
-        Map<String, Object> RelatedObjNewAttributeMap = new Map<String, Object>();
-        
-        for(String attrValueKey : ObjAttributeMap.keySet()){
-            Object attrValue = ObjAttributeMap.get(attrValueKey);
-            
-            if(attrValue != 'attributes'){
-            	if(attrValue instanceof SObject){
-            		RelatedObjNewAttributeMap = flattenObjectJSON(attrValue, attrValueKey);	
-                }else{
-                	ObjNewAttributeMap.put(objName+ '.' +attrValueKey, attrValue); 	    
-                }    
-            }
-        }
-        ObjNewAttributeMap.putAll(RelatedObjNewAttributeMap);
-		System.debug('--- new Object JSON --- ' + ObjNewAttributeMap);
-        
-        return ObjNewAttributeMap;
-	}
     
     /*global Class Column{
         @AuraEnabled
