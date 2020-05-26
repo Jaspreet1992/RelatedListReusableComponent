@@ -8,9 +8,10 @@ import { refreshApex } from '@salesforce/apex';
 import getRelatedRecords from '@salesforce/apex/ReusableRelatedListCmpCtrl.getRelatedRecords';
 
 export default class ReusableRelatedListCmp extends LightningElement(LightningElement) {
-    @api key;
+    @api metaDatakey;
     @api recordId;
     @api relationshipFieldApiName;
+    @api dynamicCondition;
 
     @track data = [];
     @track columns = [];
@@ -25,7 +26,9 @@ export default class ReusableRelatedListCmp extends LightningElement(LightningEl
     ComponentTitle;
     HeaderButtons;
 
-    @wire(getRelatedRecords, { recordId: '$recordId', key: '$key', relationshipFieldApiName: '$relationshipFieldApiName', sortField: '$sortBy', sortDirection: '$sortedDirection'})
+    @wire(getRelatedRecords, { recordId: '$recordId', metaDatakey: '$metaDatakey', 
+        relationshipFieldApiName: '$relationshipFieldApiName', dynamicCondition: '$dynamicCondition', 
+        sortField: '$sortBy', sortDirection: '$sortedDirection'})
     loadResults({ error, data }){
         if(error){
             //to do
@@ -132,7 +135,19 @@ export default class ReusableRelatedListCmp extends LightningElement(LightningEl
                 let openAs = col_button.openAs;
                 
                 if(label === actionName && link !== '' && link !== null && link !== undefined){
-                    if(link.indexOf("?") !== -1){
+                    if(link.indexOf("standard view nooverride") !== -1){
+                        link = '/' + row.Id + '?nooverride=1'; 
+                    }
+                    else if(link.indexOf("standard view") !== -1){
+                        link = '/' + row.Id; 
+                    }
+                    else if(link.indexOf("standard edit nooverride") !== -1){
+                        link = '/' + row.Id + '/e?nooverride=1'; 
+                    }
+                    else if(link.indexOf("standard edit") !== -1){
+                        link = '/' + row.Id + '/e'; 
+                    }
+                    else if(link.indexOf("?") !== -1){
                         link = link + '&ParentId=' + this.recordId + '&RecId=' + row.Id; 
                     }else{
                         link = link + '?ParentId=' + this.recordId  + '&RecId=' + row.Id; 
@@ -141,12 +156,12 @@ export default class ReusableRelatedListCmp extends LightningElement(LightningEl
 
                     if(openAs !== '' && openAs !== null && openAs !== undefined ){
                         if(openAs === 'window'){
-                            window.open('apex/childWindowExp', "childWindow", "height=570,width=820,scrollbars=yes");
+                            window.open(link, "childWindow", "height=570,width=820,scrollbars=yes");
                         }
                         else if(openAs === 'tab'){
                             window.open(link, "_blank");
                         }
-                        else if(openAs === 'self'){
+                        else{
                             window.location = link; 
                         }   
                     }
