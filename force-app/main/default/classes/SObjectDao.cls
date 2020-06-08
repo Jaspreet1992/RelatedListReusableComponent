@@ -3,9 +3,16 @@
 * See LICENSE file or go to https://github.com/Jaspreet1992/RelatedListReusableComponents for full license details. *
 *************************************************************************************************/ 
 
-public abstract class SObjectDao implements IDao{
+public virtual class SObjectDao implements IDao{
 	
-    public abstract void queryRecords(String query);
-    public abstract List<Object> getData();
+    private List<SObject> records;
+    
+    public virtual void queryRecords(String query){
+        records = Database.query(query);
+    }
+    
+    public virtual List<Object> getData(){
+        return (List<Object>) records;
+    }
     
 }

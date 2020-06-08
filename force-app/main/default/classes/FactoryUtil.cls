@@ -22,7 +22,7 @@ public class FactoryUtil {
     }
     
     public SObjectDao getSObjectDao(){
-        return new RRListDataDao();
+        return new SObjectDao();
     }
     
 	public IFlattenJSONService getFlattenService(List<Object> objList, String serviceClassName){
@@ -37,18 +37,9 @@ public class FactoryUtil {
                 classType = Type.forName(serviceClassName);
             }
             
-            //Switch case for different FlattenJSONService classes
-            switch on serviceClassName {
-               //This is just a placeholder condition
-               when 'class1' {
-                   return null;
-               }
-               when else {
-                   service = (FlattenJSONService) classType.newInstance();
-                   service.setList(objList);
-                   return service;
-               }
-            }
+            service = (IFlattenJSONService) classType.newInstance();
+            service.setList(objList);
+            return service;
         }
         catch(Exception ex){
             System.debug('---- Exception ---- ' + ex.getMessage());
