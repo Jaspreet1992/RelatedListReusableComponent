@@ -16,8 +16,9 @@ export default class ReusableRelatedListCmp extends LightningElement(LightningEl
     @track data = [];
     @track columns = [];
     @track ViewRecordLabel = 'Show More';
-    @track sortBy = 'Id';
-    @track sortedDirection = 'asc';
+    @track showFooter=false;
+    @track sortBy = '';
+    @track sortedDirection = '';
 
     AllRecords;
     TopRecords;
@@ -25,6 +26,7 @@ export default class ReusableRelatedListCmp extends LightningElement(LightningEl
     ColumnHeaderButtons;
     ComponentTitle;
     HeaderButtons;
+    CmpHeaderIcon;
 
     @wire(getRelatedRecords, { recordId: '$recordId', metaDatakey: '$metaDatakey', 
         relationshipFieldApiName: '$relationshipFieldApiName', dynamicCondition: '$dynamicCondition', 
@@ -45,10 +47,26 @@ export default class ReusableRelatedListCmp extends LightningElement(LightningEl
             //to do
             this.TopRecords = data.TopRecords;
             this.AllRecords = data.AllRecords;
-            this.data = this.TopRecords;
-            console.log('TopRecords: ' + data.TopRecords);
+            console.log('TopRecords: ' + JSON.stringify(data.TopRecords));
+            console.log('AllRecords: ' + JSON.stringify(data.AllRecords));
+            console.log('AllRecords length: ' + JSON.stringify(data.AllRecords.length));
 
             this.columns = JSON.parse(data.DataTableHeaders);
+            if(data.TopRecords && data.TopRecords.length>0){
+                console.log('Data block');
+                this.data = this.TopRecords;
+            }
+            else{
+                console.log('Data else block');
+                this.formateNoDataRow();
+                console.log('Data top Recs: ' + this.data);
+            }
+            
+            if(data.AllRecords && (data.AllRecords.length > 5)){
+                console.log('show Footer: ' + this.showFooter);
+                this.showFooter = true;
+            }
+
             if(data.ColumnButtonsJSON !== '' && data.ColumnButtonsJSON !== null && data.ColumnButtonsJSON !== undefined){
                 this.ColumnButtons = JSON.parse(data.ColumnButtonsJSON);
             }
@@ -63,6 +81,22 @@ export default class ReusableRelatedListCmp extends LightningElement(LightningEl
 
             if(data.ComponentTitle !== '' && data.ComponentTitle !== null && data.ComponentTitle !== undefined){
                 this.ComponentTitle = data.ComponentTitle;
+            }
+            if(data.CmpHeaderIcon){
+                this.CmpHeaderIcon = data.CmpHeaderIcon;
+            }
+        }
+    }
+
+    formateNoDataRow(){
+        let noDateSet=false;
+        for(let i=0; i<this.columns.length; i++){
+            if(this.columns[i].type === 'text' && noDateSet===false){
+                this.data = JSON.parse(`[{"`+this.columns[i].fieldName+`":"No Data"}]`);
+                noDateSet = true;
+            }
+            if(this.columns[i].type === 'action'){
+                this.columns.splice(i, 1);
             }
         }
     }
@@ -123,10 +157,18 @@ export default class ReusableRelatedListCmp extends LightningElement(LightningEl
 
     }
 
+    handleHeaderButtonAction(event){
+        console.log(' button clicked ' + event.target.value);
+
+        /*for(let index=0; index<this.HeaderButtons; index++){
+
+        }*/
+    }
+    
     handleRowAction(event){
         const actionName = event.detail.action.name;
         const row = event.detail.row;
-        //const row = event.detail.row;
+        
         if(this.ColumnButtons !== '' && this.ColumnButtons !== null && this.ColumnButtons !== undefined){
             for(let index =0; index< this.ColumnButtons.length; index++){
                 let col_button = this.ColumnButtons[index];

@@ -41,7 +41,7 @@ public class RequestResponseHandler {
             new RelatedListResultWrapper(allRecords, TopSelectedRecords, metaDataRec.Column_JSON__c, 
                                          metaDataRec.Column_Buttons_JSON__c, 
                                          metaDataRec.Column_Header_Buttons_JSON__c, 
-                                         metaDataRec.Component_Title__c, metaDataRec.Header_Buttons_JSON__c);
+                                         metaDataRec.Component_Title__c, metaDataRec.Header_Buttons_JSON__c, metaDataRec.Header_Icon__c);
         return resultWrapper;
     }
 

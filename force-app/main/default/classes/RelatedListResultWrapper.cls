@@ -18,10 +18,12 @@ global class RelatedListResultWrapper {
     global String ComponentTitle {get; set;}
     @AuraEnabled
     global String HeaderButtonsJSON {get; set;}
+	@AuraEnabled
+    global String CmpHeaderIcon {get;set;}
     
     global RelatedListResultWrapper(List<Object> AllRecords, List<Object> TopRecords, 
                                     String DataTableHeaders, String ColumnButtonsJSON, 
-                                    String ColumnHeaderButtonsJSON, String ComponentTitle, String HeaderButtonsJSON)
+                                    String ColumnHeaderButtonsJSON, String ComponentTitle, String HeaderButtonsJSON, String CmpHeaderIcon)
     {
         this.AllRecords = AllRecords;
         this.TopRecords = TopRecords;
@@ -30,5 +32,6 @@ global class RelatedListResultWrapper {
         this.ColumnHeaderButtonsJSON = ColumnHeaderButtonsJSON;
         this.ComponentTitle = ComponentTitle;
         this.HeaderButtonsJSON = HeaderButtonsJSON;
+		this.CmpHeaderIcon = CmpHeaderIcon;
     }
 }
