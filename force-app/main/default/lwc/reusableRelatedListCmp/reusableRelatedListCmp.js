@@ -27,6 +27,7 @@ export default class ReusableRelatedListCmp extends LightningElement(LightningEl
     ComponentTitle;
     HeaderButtons;
     CmpHeaderIcon;
+    
 
     @wire(getRelatedRecords, { recordId: '$recordId', metaDatakey: '$metaDatakey', 
         relationshipFieldApiName: '$relationshipFieldApiName', dynamicCondition: '$dynamicCondition', 
@@ -191,12 +192,16 @@ export default class ReusableRelatedListCmp extends LightningElement(LightningEl
                     }
                     else if(link.indexOf("?") !== -1){
                         link = link + '&ParentId=' + this.recordId + '&RecId=' + row.Id; 
-                    }else{
+                    }
+                    else if(openAs !== 'modal-dialog'){
                         link = link + '?ParentId=' + this.recordId  + '&RecId=' + row.Id; 
                     }
                     console.log(' button clicked ' + link);
 
                     if(openAs !== '' && openAs !== null && openAs !== undefined ){
+                        if(openAs == 'modal-dialog'){
+                            dispatchOpenDialogEvent(link);
+                        }
                         if(openAs === 'window'){
                             window.open(link, "childWindow", "height=570,width=820,scrollbars=yes");
                         }
@@ -213,6 +218,9 @@ export default class ReusableRelatedListCmp extends LightningElement(LightningEl
         
     }
 
-
+    dispatchOpenDialogEvent(dialogName){
+        const openModalDialogEvent = new CustomEvent('Name', { detail: dialogName });
+        this.dispatchEvent(openModalDialogEvent);
+    }
 
 }
