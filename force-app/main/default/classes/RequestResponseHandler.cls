@@ -1,3 +1,8 @@
+/*************************************************************************************************
+* This file is part of the related-list-reusable-component project, released under the MIT License.             *
+* See LICENSE file or go to https://github.com/Jaspreet1992/RelatedListReusableComponents for full license details. *
+*************************************************************************************************/ 
+
 public class RequestResponseHandler {
     
     private static RequestResponseHandler handler;
@@ -19,8 +24,7 @@ public class RequestResponseHandler {
         RelatedListRequestWrapper reqWrapper = 
             new RelatedListRequestWrapper(recordId, metaDatakey,
                                          relationshipFieldApiName, dynamicCondition, 
-                                         sortField, sortDirection);
-        System.debug('$$ reqWrapper: '+reqWrapper);                                               
+                                         sortField, sortDirection);                            
         return reqWrapper;                                               
     }
     
