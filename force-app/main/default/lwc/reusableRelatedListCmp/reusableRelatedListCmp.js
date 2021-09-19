@@ -140,8 +140,6 @@ export default class ReusableRelatedListCmp extends NavigationMixin(LightningEle
         // calling sortdata function to sort the data based on direction and selected field
         this.sortData(event.detail.fieldName, event.detail.sortDirection);
         return refreshApex(this.data);
-
-        
     }
 
     sortData(fieldname, direction) {
@@ -168,79 +166,19 @@ export default class ReusableRelatedListCmp extends NavigationMixin(LightningEle
 
         // set the sorted data to data table data
         this.data = parseData;
-
     }
 
     handleHeaderButtonAction(event){
-        const actionName = event.detail.action.name;
-        console.log(' actionName ' + actionName);
-
-        if(this.HeaderBtns){
-            for(let index=0; index<this.HeaderBtns; index++){
-
-            }
-        }
+        const value = event.target.value;
+        console.log(' value ' + value);
+        this.handleButtonActions(this.HeaderBtns, value, null);
     }
     
     handleRowAction(event){
         const actionName = event.detail.action.name;
         const row = event.detail.row;
         
-        //if(this.ColumnButtons !== '' && this.ColumnButtons !== null && this.ColumnButtons !== undefined){
-        if(this.ColumnButtons){
-            for(let index =0; index< this.ColumnButtons.length; index++){
-                let col_button = this.ColumnButtons[index];
-                let name = col_button.name;
-                let link = col_button.link;
-                let openAs = col_button.openAs;
-                
-                if(name === actionName && link){
-                    if (typeof link === 'string') {
-                        //if(link.indexOf("standard view nooverride") !== -1){
-                        if(this.containsElement(link, "standard view nooverride")){
-                            link = '/' + row.Id + '?nooverride=1'; 
-                        }
-                        else if(this.containsElement(link, "standard view")){
-                            link = '/' + row.Id; 
-                        }
-                        else if(this.containsElement(link, "standard edit nooverride")){
-                            link = '/' + row.Id + '/e?nooverride=1'; 
-                        }
-                        else if(this.containsElement(link, "standard edit")){
-                            link = '/' + row.Id + '/e'; 
-                        }
-                        else if(this.containsElement(link, "?")){
-                            link = link + '&ParentId=' + this.recordId + '&RecId=' + row.Id; 
-                        }
-                        else if(openAs !== 'modal-dialog'){
-                            link = link + '?ParentId=' + this.recordId  + '&RecId=' + row.Id; 
-                        }
-                        
-                        console.log(' button clicked ' + link);
-                    }
-                    
-
-                    if(openAs){
-                        if(openAs == 'modal-dialog'){
-                            dispatchOpenDialogEvent(link);
-                        }
-                        if(openAs === 'window'){
-                            window.open(link, "childWindow", "height=570,width=820,scrollbars=yes");
-                        }
-                        else if(openAs === 'tab'){
-                            window.open(link, "_blank");
-                        }
-                        else if(openAs === 'lightning'){
-                            this.lightningNavigation(link.type, link.attributes, row.Id);
-                        }
-                        else{
-                            window.location = link; 
-                        }   
-                    }
-                }
-            }
-        }
-        
+        this.handleButtonActions(this.ColumnButtons, actionName, row);
     }
 
     dispatchOpenDialogEvent(dialogName){
@@ -265,6 +203,65 @@ export default class ReusableRelatedListCmp extends NavigationMixin(LightningEle
             return true;
         }else{
             return false;
+        }
+    }
+
+    handleButtonActions(buttons, actionName, selectedRow){
+        if(buttons){
+            for(let index =0; index< buttons.length; index++){
+                let button = buttons[index];
+                let name = button.name;
+                let link = button.link;
+                let openAs = button.openAs;
+                
+                if(name === actionName && link && selectedRow && selectedRow.Id){   //runs only for row actions
+                    if (typeof link === 'string') {
+                        if(this.containsElement(link, "standard view nooverride")){
+                            link = '/' + selectedRow.Id + '?nooverride=1'; 
+                        }
+                        else if(this.containsElement(link, "standard view")){
+                            link = '/' + selectedRow.Id; 
+                        }
+                        else if(this.containsElement(link, "standard edit nooverride")){
+                            link = '/' + selectedRow.Id + '/e?nooverride=1'; 
+                        }
+                        else if(this.containsElement(link, "standard edit")){
+                            link = '/' + selectedRow.Id + '/e'; 
+                        }
+                        else if(this.containsElement(link, "?")){
+                            link = link + '&ParentId=' + this.recordId + '&RecId=' + selectedRow.Id; 
+                        }
+                        else if(openAs !== 'modal-dialog'){
+                            link = link + '?ParentId=' + this.recordId  + '&RecId=' + selectedRow.Id; 
+                        }
+                        
+                        console.log(' button clicked ' + link);
+                    }
+                    
+
+                    if(openAs){
+                        if(openAs == 'modal-dialog'){
+                            dispatchOpenDialogEvent(link);
+                        }
+                        if(openAs === 'window'){
+                            window.open(link, "childWindow", "height=570,width=820,scrollbars=yes");
+                        }
+                        else if(openAs === 'tab'){
+                            window.open(link, "_blank");
+                        }
+                        else if(openAs === 'lightning'){
+                            if(selectedRow && selectedRow.Id){
+                                this.lightningNavigation(link.type, link.attributes, selectedRow.Id);
+                            }else{
+                                this.lightningNavigation(link.type, link.attributes, null);
+                            }
+                        }
+                        else{
+                            window.location = link; 
+                        }   
+                    }
+                }
+            }
         }
     }
 
