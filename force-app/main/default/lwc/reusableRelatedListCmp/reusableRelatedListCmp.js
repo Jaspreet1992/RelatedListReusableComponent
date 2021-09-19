@@ -6,8 +6,9 @@
 import { LightningElement, wire, track, api  } from 'lwc';
 import { refreshApex } from '@salesforce/apex';
 import getRelatedRecords from '@salesforce/apex/ReusableRelatedListCmpCtrl.getRelatedRecords';
+import { NavigationMixin } from 'lightning/navigation';
 
-export default class ReusableRelatedListCmp extends LightningElement(LightningElement) {
+export default class ReusableRelatedListCmp extends NavigationMixin(LightningElement) {
     @api metaDatakey;
     @api recordId;
     @api relationshipFieldApiName;
@@ -25,7 +26,9 @@ export default class ReusableRelatedListCmp extends LightningElement(LightningEl
     ColumnButtons;
     ColumnHeaderButtons;
     ComponentTitle;
-    HeaderButtons;
+    HeaderBtns;
+    HeaderGroupButtons;
+    HeaderMenuButtons;
     CmpHeaderIcon;
     
 
@@ -51,6 +54,7 @@ export default class ReusableRelatedListCmp extends LightningElement(LightningEl
             console.log('TopRecords: ' + JSON.stringify(data.TopRecords));
             console.log('AllRecords: ' + JSON.stringify(data.AllRecords));
             console.log('AllRecords length: ' + JSON.stringify(data.AllRecords.length));
+            console.log('Column: '+JSON.stringify(data.ColumnButtonsJSON));
 
             this.columns = JSON.parse(data.DataTableHeaders);
             if(data.TopRecords && data.TopRecords.length>0){
@@ -68,19 +72,28 @@ export default class ReusableRelatedListCmp extends LightningElement(LightningEl
                 this.showFooter = true;
             }
 
-            if(data.ColumnButtonsJSON !== '' && data.ColumnButtonsJSON !== null && data.ColumnButtonsJSON !== undefined){
+            if(data.ColumnButtonsJSON){
                 this.ColumnButtons = JSON.parse(data.ColumnButtonsJSON);
             }
 
-            if(data.ColumnHeaderButtonsJSON !== '' && data.ColumnHeaderButtonsJSON !== null && data.ColumnHeaderButtonsJSON !== undefined){
+            if(data.ColumnHeaderButtonsJSON){
                 this.ColumnHeaderButtons = JSON.parse(data.ColumnHeaderButtonsJSON);
             }
 
-            if(data.HeaderButtonsJSON !== '' && data.HeaderButtonsJSON !== null && data.HeaderButtonsJSON !== undefined){
-                this.HeaderButtons = JSON.parse(data.HeaderButtonsJSON);
+            if(data.HeaderButtonsJSON){
+                this.HeaderBtns = JSON.parse(data.HeaderButtonsJSON);
+                this.HeaderGroupButtons = [];
+                if(this.HeaderBtns.length > 3) {this.HeaderMenuButtons = [];}
+                for(let index=0; index<this.HeaderBtns.length; index++){
+                    if(index<3){
+                        this.HeaderGroupButtons.push(this.HeaderBtns[index]);
+                    }else{
+                        this.HeaderMenuButtons.push(this.HeaderBtns[index]);
+                    }
+                }
             }
 
-            if(data.ComponentTitle !== '' && data.ComponentTitle !== null && data.ComponentTitle !== undefined){
+            if(data.ComponentTitle){
                 this.ComponentTitle = data.ComponentTitle;
             }
             if(data.CmpHeaderIcon){
@@ -159,46 +172,55 @@ export default class ReusableRelatedListCmp extends LightningElement(LightningEl
     }
 
     handleHeaderButtonAction(event){
-        console.log(' button clicked ' + event.target.value);
+        const actionName = event.detail.action.name;
+        console.log(' actionName ' + actionName);
 
-        /*for(let index=0; index<this.HeaderButtons; index++){
+        if(this.HeaderBtns){
+            for(let index=0; index<this.HeaderBtns; index++){
 
-        }*/
+            }
+        }
     }
     
     handleRowAction(event){
         const actionName = event.detail.action.name;
         const row = event.detail.row;
         
-        if(this.ColumnButtons !== '' && this.ColumnButtons !== null && this.ColumnButtons !== undefined){
+        //if(this.ColumnButtons !== '' && this.ColumnButtons !== null && this.ColumnButtons !== undefined){
+        if(this.ColumnButtons){
             for(let index =0; index< this.ColumnButtons.length; index++){
                 let col_button = this.ColumnButtons[index];
-                let label = col_button.label;
+                let name = col_button.name;
                 let link = col_button.link;
                 let openAs = col_button.openAs;
                 
-                if(label === actionName && link !== '' && link !== null && link !== undefined){
-                    if(link.indexOf("standard view nooverride") !== -1){
-                        link = '/' + row.Id + '?nooverride=1'; 
+                if(name === actionName && link){
+                    if (typeof link === 'string') {
+                        //if(link.indexOf("standard view nooverride") !== -1){
+                        if(this.containsElement(link, "standard view nooverride")){
+                            link = '/' + row.Id + '?nooverride=1'; 
+                        }
+                        else if(this.containsElement(link, "standard view")){
+                            link = '/' + row.Id; 
+                        }
+                        else if(this.containsElement(link, "standard edit nooverride")){
+                            link = '/' + row.Id + '/e?nooverride=1'; 
+                        }
+                        else if(this.containsElement(link, "standard edit")){
+                            link = '/' + row.Id + '/e'; 
+                        }
+                        else if(this.containsElement(link, "?")){
+                            link = link + '&ParentId=' + this.recordId + '&RecId=' + row.Id; 
+                        }
+                        else if(openAs !== 'modal-dialog'){
+                            link = link + '?ParentId=' + this.recordId  + '&RecId=' + row.Id; 
+                        }
+                        
+                        console.log(' button clicked ' + link);
                     }
-                    else if(link.indexOf("standard view") !== -1){
-                        link = '/' + row.Id; 
-                    }
-                    else if(link.indexOf("standard edit nooverride") !== -1){
-                        link = '/' + row.Id + '/e?nooverride=1'; 
-                    }
-                    else if(link.indexOf("standard edit") !== -1){
-                        link = '/' + row.Id + '/e'; 
-                    }
-                    else if(link.indexOf("?") !== -1){
-                        link = link + '&ParentId=' + this.recordId + '&RecId=' + row.Id; 
-                    }
-                    else if(openAs !== 'modal-dialog'){
-                        link = link + '?ParentId=' + this.recordId  + '&RecId=' + row.Id; 
-                    }
-                    console.log(' button clicked ' + link);
+                    
 
-                    if(openAs !== '' && openAs !== null && openAs !== undefined ){
+                    if(openAs){
                         if(openAs == 'modal-dialog'){
                             dispatchOpenDialogEvent(link);
                         }
@@ -207,6 +229,9 @@ export default class ReusableRelatedListCmp extends LightningElement(LightningEl
                         }
                         else if(openAs === 'tab'){
                             window.open(link, "_blank");
+                        }
+                        else if(openAs === 'lightning'){
+                            this.lightningNavigation(link.type, link.attributes, row.Id);
                         }
                         else{
                             window.location = link; 
@@ -221,6 +246,26 @@ export default class ReusableRelatedListCmp extends LightningElement(LightningEl
     dispatchOpenDialogEvent(dialogName){
         const openModalDialogEvent = new CustomEvent('Name', { detail: dialogName });
         this.dispatchEvent(openModalDialogEvent);
+    }
+
+    lightningNavigation(type, attributes, recId) {
+        let attr = {};
+        if(recId){
+            attr.recordId = recId; 
+        }
+        Object.assign(attr, attributes);
+        this[NavigationMixin.Navigate]({
+            type: type,
+            attributes: attr
+        });
+    }
+
+    containsElement(dateString, txt){
+        if(dateString.indexOf(txt) !== -1){
+            return true;
+        }else{
+            return false;
+        }
     }
 
 }

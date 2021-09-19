@@ -8,11 +8,23 @@
 <template>
 
   <lightning-card title={ComponentTitle} icon-name={CmpHeaderIcon}>
-      <template if:true={HeaderButtons}>
-          <template for:each={HeaderButtons} for:item="button">
+      <template if:true={HeaderGroupButtons}>
+        <lightning-button-group slot="actions">
+          <template for:each={HeaderGroupButtons} for:item="button">
             <lightning-button key={button.label} value={button.name} label={button.label} 
-              onclick={handleHeaderButtonAction} slot="actions"></lightning-button>
+              onclick={handleHeaderButtonAction} ></lightning-button>
           </template>
+          <template if:true={HeaderMenuButtons}>
+            <lightning-button-menu alternative-text="Show menu" variant="border-filled">
+              <template for:each={HeaderMenuButtons} for:item="button">
+                <lightning-menu-item key={button.label} value={button.name} label={button.label} 
+                  onclick={handleHeaderButtonAction} ></lightning-menu-item>
+              </template>
+            </lightning-button-menu>
+            
+          </template>
+        </lightning-button-group>
+          
       </template>
       <p class="slds-p-horizontal_small">
           <lightning-datatable
