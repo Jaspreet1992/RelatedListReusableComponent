@@ -7,12 +7,27 @@ public virtual class SObjectDao implements IDao{
 	
     private List<SObject> records;
     
-    public virtual void queryRecords(String query){
-        records = Database.query(query);
+    public virtual void queryRecords(String query, String mode){
+        if(mode == RRListConstants.UserMode){
+            SObjectDoa_UserMode umObj = new SObjectDoa_UserMode();
+            this.records = umObj.getData(query);
+            System.debug('User Mode records - ' + this.records);
+        }
+        else{
+            this.records = Database.query(query);
+            System.debug('System Mode records - ' + this.records);
+        }
     }
     
     public virtual List<Object> getData(){
         return (List<Object>) records;
+    }
+
+    public with sharing class SObjectDoa_UserMode{
+        public List<SObject> getData(String query){
+            return Database.query(query);
+        }
+        
     }
     
 }

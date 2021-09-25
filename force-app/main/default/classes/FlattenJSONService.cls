@@ -18,7 +18,7 @@ public class FlattenJSONService implements IFlattenJSONService {
             
             for(String attrValueKey : ObjAttributeMap.keySet()){
                 Object attrValue = ObjAttributeMap.get(attrValueKey);
-                if(attrValue != 'attributes'){
+                if(attrValue != RRListConstants.Attributes){
                     if(isAttributeObject(attrValue)){
                         ObjNewAttributeMap = flattenObjectJSON(attrValue, attrValueKey);
                     }    
@@ -51,7 +51,7 @@ public class FlattenJSONService implements IFlattenJSONService {
         	for(String attrValueKey : ObjAttributeMap.keySet()){
                 Object attrValue = ObjAttributeMap.get(attrValueKey);
 
-                if(attrValue != 'attributes'){
+                if(attrValue != RRListConstants.Attributes){
                     if(isAttributeObject(attrValue) || isAttributeList(attrValue)){
                         RelatedObjNewAttributeMap = flattenObjectJSON(attrValue, objName+ '.' +attrValueKey);	
                     }else{

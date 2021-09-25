@@ -30,8 +30,8 @@ public class FactoryUtil {
         Type classType;
         
         try{
-            if(serviceClassName == 'default'){
-                classType = Type.forName('FlattenJSONService');
+            if(serviceClassName == RRListConstants.DefaultService){
+                classType = Type.forName(RRListConstants.FlattenJSONService);
             }
             else{
                 classType = Type.forName(serviceClassName);

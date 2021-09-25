@@ -3,7 +3,7 @@
 * See LICENSE file or go to https://github.com/Jaspreet1992/RelatedListReusableComponents for full license details. *
 *************************************************************************************************/
 
-global class ReusableRelatedListCmpCtrl {
+global without sharing class ReusableRelatedListCmpCtrl {
 
     @AuraEnabled(Cacheable=true)
     global static RelatedListResultWrapper getRelatedRecords(String recordId, String metaDatakey,

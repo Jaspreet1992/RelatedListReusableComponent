@@ -44,7 +44,7 @@ public class RRListService {
                                                       req.dynamicConditions);
         System.debug('$$ query: '+query);
         sObjDao = factory.getSObjectDao();
-        sObjDao.queryRecords(query); 
+        sObjDao.queryRecords(query,metaDataRec.Execution_Mode__c); 
         
         return factory.getFlattenService((List<Object>)JSON.deserializeUntyped(JSON.serialize(sObjDao.getData())), 
                                          metaDataRec.JsonFlattenServiceName__c).flattenListJSON();
